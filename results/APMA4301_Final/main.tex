@@ -1,0 +1,112 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Diaz Essay
+% LaTeX Template
+% Version 2.0 (13/1/19)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Vel (vel@LaTeXTemplates.com)
+% Nicolas Diaz (nsdiaz@uc.cl)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt]{diazessay} % Font size (can be 10pt, 11pt or 12pt)
+\usepackage{amsmath,amssymb}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\usepackage{graphicx}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Final Project of Numerical Methods for PDE} \\ {\Large\itshape Finite Volume Method for Euler Equation}} % Title and subtitle
+
+\author{\textbf{Zejian You} \\ \textit{Columbia University}} % Author and institution
+
+\date{\today} % Date, use \date{} for no date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT AND KEYWORDS
+%----------------------------------------------------------------------------------------
+
+%\renewcommand{\abstractname}{Summary} % Uncomment to change the name of the abstract to something else
+
+\begin{abstract}
+
+\end{abstract}
+
+\hspace*{3.6mm}\textit{Keywords:}  % Keywords
+
+\vspace{30pt} % Vertical whitespace between the abstract and first section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+\section{Problem Description}
+
+- Mass Conservation
+  
+$$\rho_t + (\rho u)_x = 0.$$
+
+- Momentum Conservation
+
+$$(\rho u)_t + (\rho u^2 + p)_x = 0.$$
+
+- Energy Conservation
+  
+$$E = \rho e + \frac{1}{2}\rho u^2.$$
+$$E_t + (u(E+p))_x = 0.$$
+
+\subsection{Riemann Problem}
+\subsubsection{Exact Riemann Problem}
+\subsubsection{Approximate Riemann Problem}
+
+\subsection{Conservative Flux}
+\subsection{Lax-Friedrichs Numerical Flux}
+\subsection{Refined Lax-Friedrichs Numerical Flux}
+\subsubsection{Roe Numerical Flux}
+
+
+
+\section{Methods}
+\subsection{Finite Volume Method}
+
+The governing equation could be written into matrix form:
+$$
+    \frac{\partial \bf{V}}{\partial t} + \frac{\partial \bf{F}(\bf{V})}{\partial x} =0\\
+$$
+$$
+    \bf{V} = \begin{bmatrix}
+        \rho \\ \rho u\\ \rho E
+    \end{bmatrix}, \quad \bf{F}(\bf{V})=\begin{bmatrix}
+        \rho u \\\frac{1}{2}\rho u^2 + p b\\(E + p) u
+    \end{bmatrix}
+$$
+
+\section{Error Analysis}
+\section{Conclusion}
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\bibliographystyle{unsrt}
+\bibliography{../Library.bib}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

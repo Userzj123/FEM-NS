@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# virtual environment
+.venv/*
+
+# latex compiling 
+*.aux
+*.bbl
+*.blg
+*.fls
+__init__.*
+*.DS_Store
+*/images/
