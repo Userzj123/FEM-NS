@@ -1,6 +1,7 @@
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
+from euler import *
 
 def test_newton():
     gamma = 1.4
@@ -37,9 +38,20 @@ def test_newton():
     MaxIT = 1e5
     r = 1e5
     while t < t_final:
-        # Newton's Iteration
-        while r>tol and count<MaxIT:
-            dq = 
+        for xn in range(mX):
+            # xi = x[xn]/(tn+1)*delta_t
+            # q[tn+1, xn, :] = solver(xi)
+            solver_l = Euler_1D_roe(q[:, xn], q[:, xn+1])
+            solver_r = Euler_1D_roe(q[:, xn+1], q[:, xn+2])
+
+            # Average within cell xn
+            for ind in range(len(q_l)):
+                q_new[ind, xn+1] = (integrate.quad(lambda xi: solver_r(xi)[ind], -0.5*delta_x, 0)[0] + integrate.quad(lambda xi: solver_l(xi)[ind], 0, 0.5*delta_x)[0]) / delta_x
+        
+        # Ghost Cells
+        q_new[:, 0] = q_new[:, 1]
+        q_new[:, mX+1] = q_new[:, mX]
+
         
 
         # update
