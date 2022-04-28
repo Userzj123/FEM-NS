@@ -71,31 +71,255 @@ $$(\rho u)_t + (\rho u^2 + p)_x = 0.$$
 $$E = \rho e + \frac{1}{2}\rho u^2.$$
 $$E_t + (u(E+p))_x = 0.$$
 
-\subsection{Riemann Problem}
-\subsubsection{Exact Riemann Problem}
-\subsubsection{Approximate Riemann Problem}
+To close the equation system, we need one more equation
 
-\subsection{Conservative Flux}
-\subsection{Lax-Friedrichs Numerical Flux}
-\subsection{Refined Lax-Friedrichs Numerical Flux}
-\subsubsection{Roe Numerical Flux}
+- Equation of State
+$$
+p = \rho e(\gamma -1)
+$$
 
-
-
-\section{Methods}
-\subsection{Finite Volume Method}
-
+\subsection{Hyperbolic structure of the 1D Euler equations}
 The governing equation could be written into matrix form:
 $$
-    \frac{\partial \bf{V}}{\partial t} + \frac{\partial \bf{F}(\bf{V})}{\partial x} =0\\
+    \frac{\partial \bf{V}}{\partial t} + \frac{\partial \bf{F}(\bf{V})}{\partial x} =0 \quad \text{or}
 $$
 $$
     \bf{V} = \begin{bmatrix}
-        \rho \\ \rho u\\ \rho E
+        \rho \\ \rho u\\ E
     \end{bmatrix}, \quad \bf{F}(\bf{V})=\begin{bmatrix}
-        \rho u \\\frac{1}{2}\rho u^2 + p b\\(E + p) u
+        \rho u \\\rho u^2 + p\\(E + p) u
     \end{bmatrix}
 $$
+
+
+Introduce \textit{primitive variable} $\textbf{q} = [\rho, u, p]^{T}$ and write above equation in quasi-linear form with primitive variable:
+
+$$
+\begin{bmatrix}
+    \rho \\ u\\ p
+\end{bmatrix}_t
++
+\begin{bmatrix}
+    u & \rho & 0\\
+    0 & u & 1/\rho\\
+    0 & \gamma p & u
+\end{bmatrix}
+\begin{bmatrix}
+    \rho\\ u\\ p
+\end{bmatrix}_x
+=0
+$$
+
+$$
+\textbf{q}_t + \frac{\partial \bar{\textbf{F}}(\textbf{q})}{\partial \textbf{q}}\textbf{q}_x= 0
+$$
+
+
+\subsection{Finite Volume Method}
+Based on Green's formula, we have
+
+$$
+\nabla\cdot \textbf{F}(\textbf{V}) = \oint_{\partial T_j} \textbf{F}(\textbf{V})\cdot \textbf{n} ds
+$$
+
+For finite volume discretization, we have\cite{li_multigrid_nodate}
+
+$$
+\oint_{\partial T_j} \textbf{F}(\textbf{V})\cdot \textbf{n} ds 
+\approx \sum_{e_{ik}\in \partial T_j} \oint_{e_{jk}} \bar{\textbf{F}}(\textbf{V}_j, \textbf{V}_k)\cdot \textbf{n}_{jk} dl
+$$
+
+
+\begin{align}
+    Q_j^{n+1} = Q_j^n - \frac{\Delta t_n}{\Delta x_j} (F_{j+1/2}^n - F_{j-1/2}^n)
+\end{align}
+
+\subsection{Eigenvalue and Eigenvector of Euler Flux Jacobian}
+
+\begin{enumerate}
+    \item Flux Jacobian of primitive variable is equal to 
+
+    $$
+    \begin{aligned}
+        \frac{\partial \bar{\textbf{F}}(\textbf{q})}{\partial \textbf{q}}= \begin{bmatrix}
+            u & \rho & 0\\
+            0 & u & 1/\rho\\
+            0 & \gamma p & u
+        \end{bmatrix}
+    \end{aligned}
+    $$
+
+    The eigenvalues and corresponding eigenvectors are
+
+    $$
+    \begin{aligned}
+        & \lambda_1 = u -c, &&\lambda_2 = u,\quad && \lambda_3 = u+c\\
+        &\textbf{r}_1 =\begin{bmatrix} -\rho /c\\1\\-\rho c\end{bmatrix}
+        &&\textbf{r}_2 =\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\quad
+        &&\textbf{r}_3 =\begin{bmatrix} \rho /c\\1\\\rho c\end{bmatrix}
+    \end{aligned}
+    $$
+
+    \item Flux of variable $\textbf{V}$ equal to
+    
+    $$
+    \begin{aligned}
+        \bar{\textbf{F}}(\textbf{V})= \begin{bmatrix}
+            V_2\\ 
+            \frac{V_2^2}{V_1} + \left(V_3 - \frac{V_2^2}{2V_1}\right) (\gamma -1)\\
+            \frac{\gamma V_2V_3}{V_1} - \frac{V_2^3}{2V_1^2}(\gamma -1)
+        \end{bmatrix}
+    \end{aligned}
+    $$
+
+
+    Flux Jacobian of variable $\textbf{V}$ equal to \footnote{with $p = (E - \frac{1}{2}\rho u^2)(\gamma -1)$, and $H=\frac{E+p}{\rho}$}
+
+    $$
+    \begin{aligned}
+        \frac{\partial \bar{\textbf{F}}(\textbf{V})}{\partial \textbf{V}}= \begin{bmatrix}
+            u & 1 & 0 \\
+            \frac{\gamma -3}{2} u^2 & (3-\gamma)u & \gamma -1\\
+            \frac{\gamma -1}{2}u^3-uH & H-(\gamma -1)u^2 & \gamma u\\
+        \end{bmatrix}
+    \end{aligned}
+    $$
+
+    Then the Euler Equation becomes 
+
+    $$
+    \textbf{V}_t + \frac{\partial \bar{\textbf{F}}(\textbf{V})}{\partial \textbf{V}}\textbf{V}_x= 0
+    $$
+
+    The eigenvalues and corresponding eigenvectors of Jacobian matrix is
+    $$
+    \begin{aligned}
+        & \lambda_1 = u -c, &&\lambda_2 = u,\quad && \lambda_3 = u+c\\
+        &\textbf{r}_1 =\begin{bmatrix} 1 \\ u-c \\H-uc\end{bmatrix}
+        &&\textbf{r}_2 =\begin{bmatrix} 1 \\ u \\ \frac{1}{2}u^2 \end{bmatrix}\quad
+        &&\textbf{r}_3 =\begin{bmatrix} 1\\ u+c \\H+uc\end{bmatrix}
+    \end{aligned}
+    $$
+
+    Here $c=\sqrt{(\gamma - 1)(H-\frac{1}{2}u^2)}$.    \cite{david_i_ketcheson_chapter_2020}
+
+\end{enumerate}
+\begin{itemize}
+    \item \textbf{linear degenerate}
+\end{itemize}
+
+
+
+\subsection{Conservative Flux}
+\subsubsection{Lax-Friedrichs Numerical Flux}
+\subsubsection{Refined Lax-Friedrichs Numerical Flux}
+\subsubsection{Roe Numerical Flux}
+
+
+\cite{roe_approximate_1981}
+
+\begin{itemize}
+    \item \textbf{Roe Average}
+    \begin{equation}
+        \bar{u} = \frac{\sqrt{\rho_r}u_r + \sqrt{\rho_l}u_l}{\sqrt{\rho_r}+\sqrt{\rho_l}}, \quad \bar{H} =\frac{\sqrt{\rho_r}H_r + \sqrt{\rho_l}H_l}{\sqrt{\rho_r}+\sqrt{\rho_l}}
+    \end{equation}
+\end{itemize}
+
+
+
+
+\section{Riemann Problem}
+\subsection{Exact Riemann Problem}
+
+\begin{itemize}
+    \item \textbf{Rankine-Hugoniot jump condition}
+    
+    For a shock wave connecting a known left or right state $q^*$ and an unknown middle state $q$, the moving speed $s$ of the shock should obey Eq.(\ref{eq3:RH jump condition}).\cite{david_i_ketcheson_chapter_2020}
+
+\begin{equation}\label{eq3:RH jump condition}
+    s(q^*-q) = f(q^*) - f(q)
+\end{equation}
+
+\item \textbf{Hugoniot locus}
+
+\item \textbf{Lax entropy condition}
+
+This physical entropy condition is equivalent to the mathematical condition that for a 1-shock to be physically relevant, the 1-characteristics must impinge on the shock (the Lax entropy condition). If the entropy condition is violated, the 1-characteristics would spread out, allowing the insertion of an expansion fan (rarefaction wave).
+\begin{itemize}
+    \item Shocks appear in regions where characteristics converge, as in the traffic jam example above.
+    \item Rarefactions appear in regions where characteristics are spreading out, as in the green light example.\cite{david_i_ketcheson_chapter_2020}
+\end{itemize}
+
+\item \textbf{Integral curves}
+
+\item \textbf{Riemann invariants}
+
+\item \textbf{similarity solutions}
+\item 
+\end{itemize}
+
+
+
+\cite{sanders_introduction_nodate}
+\subsection{Approximate Riemann Problem}
+
+Besides the exact Riemann solution, we could also obtain an approximate solution by linearizing the Euler Equation and replacing Jacobian of flux $\frac{\partial \bf{F}(\bf{V})}{\partial \bf{q}}$ by a linear operator $\hat{\bf{A}}(q_l, q_r)$ depending on the left and right status \cite{roe_approximate_1981}. Furthermore, this approximate linear operator should satisfy:
+
+
+\begin{enumerate}
+
+\item Consistency: $\hat{\bf{A}}(q_l, q_r) \rightarrow f'(q)$ as $q_l, q_r \rightarrow q$
+\item Hyperbolicity: $\hat{\bf{A}}$ must be diagonalizable with real eigenvalues, so that we can define the waves and speeds needed in the approximate solution.
+\item Conservation: $\hat{\bf{A}}(q_l, q_r)(q_r-q_l) = f(q_r) - f(q_l)$
+\end{enumerate}
+
+
+One common linear operator is the flux Jacobian of an average state:
+
+\begin{equation}
+    \hat{\bf{A}}(q_l, q_r) = f'(\hat{q})\text{, }\quad \hat{q}\in[q_l, q_r]
+\end{equation}
+
+For the system of hyperbolic equations, we could solve the system by decomposing the linear operator $\hat{\bf{A}}$ into the eigenvectors $\bf{R}$ and the matrix that eigenvalues on the diagonal $\bf{\Lambda}$ so that
+
+$$
+\begin{aligned}
+    \bf{q}_t + \hat{\bf{A}} \bf{q}_x  &= 0\\
+    \bf{q}_t + \bf{R}\Lambda\bf{R}^{-1}\bf{q}_x & = 0\\
+    \bf{R}^{-1}\bf{q}_t + \Lambda\bf{R}^{-1}\bf{q}_x & = 0\\
+    \bf{w}_t + \Lambda\bf{w}_x & = 0\\
+    w_k(x, t) & = w_k(x-\lambda_k t, 0)\\
+    \bf{q}(x, t) & = \sum_k w_k(x-\lambda_k t, 0) \bf{r_k}
+\end{aligned}
+$$
+
+
+\subsection{Newton Iteration}
+\subsubsection{Stationary Solution}
+
+For the stationary solution, we would have following iteration scheme \cite{li_multigrid_nodate}
+
+$$
+\begin{aligned}
+    \alpha \|\textbf{R}_j^{(n)}\|_{l^1} \delta \textbf{U}_j^{(n)} 
+    + \sum_{e_jk \in \partial T_j} \int_{e_{jk}} \left(\frac{\partial \bar{\textbf{F}}^{(n)}}{\partial \textbf{U}_j} \delta \textbf{U}_j^{(n)}\right) \cdot \textbf{n}_{jk} dl 
+    + \sum_{e_jk \in \partial T_j} \int_{e_{jk}} \left(\frac{\partial \bar{\textbf{F}}^{(n)}}{\partial \textbf{U}_k} \delta \textbf{U}_k^{(n)}\right) \cdot \textbf{n}_{jk} dl 
+    = -\textbf{R}_j^{(n)}
+\end{aligned}
+$$
+
+\begin{enumerate}
+    \item Input $\textbf{U}^{(0)}$ as the initial guess, and set $n=0$
+    \item Use an approximate solver for the system to get a $\delta \textbf{U}^{(n)}$
+    \item update $\textbf{U}^{(n+1)}$ by $\textbf{U}^{(n)}+\tau\delta \textbf{U}^{(n)}$
+    \item Reconstruct $\textbf{U}^{(n+1)}$ using its cell mean values to get a piecewise polynomial expression on each cell
+    \item Check if the residual $\textbf{R}^{n+1}$ is small enough
+\end{enumerate}
+
+\subsubsection{PDE}
+
+\subsection{Linear Multigrid Method for Jacobian Matrix}
+\cite{jameson_solution_1983}
 
 \section{Error Analysis}
 \section{Conclusion}
@@ -105,7 +329,7 @@ $$
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 \bibliographystyle{unsrt}
-\bibliography{../Library.bib}
+\bibliography{../Euler.bib}
 
 %----------------------------------------------------------------------------------------
 
