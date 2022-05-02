@@ -1,0 +1,247 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Diaz Essay
+% LaTeX Template
+% Version 2.0 (13/1/19)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Vel (vel@LaTeXTemplates.com)
+% Nicolas Diaz (nsdiaz@uc.cl)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt]{diazessay} % Font size (can be 10pt, 11pt or 12pt)
+\usepackage{amsmath,amssymb}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\usepackage{graphicx}
+\graphicspath{ {../} }
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Final Project of Nonlinear Computational Mechanics} \\ {\Large\itshape Approximate Riemann Solver for Nonlinear Euler Equation}} % Title and subtitle
+
+\author{\textbf{Zejian You} \\ \textit{Columbia University}} % Author and institution
+
+\date{\today} % Date, use \date{} for no date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT AND KEYWORDS
+%----------------------------------------------------------------------------------------
+
+%\renewcommand{\abstractname}{Summary} % Uncomment to change the name of the abstract to something else
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+\section{Introduction}
+
+Euler Equations are derived from Navier-Stokes Equation taking the viscosity coefficient to be zero. It has been well studied in the last decade to measure the impact of shock wave in transonic flow over aircraft, and it is still a significant topic in computational aerodynamics and engineering. In this essay, I will introduce a very common method to solve linearized Euler Equations numerically, finite volume method. 
+
+First, Euler Equations are composed of three part:
+
+- Mass Conservation
+  
+$$\rho_t + (\rho u)_x = 0.$$
+
+- Momentum Conservation
+
+$$(\rho u)_t + (\rho u^2 + p)_x = 0.$$
+
+- Energy Conservation
+  
+$$E = \rho e + \frac{1}{2}\rho u^2.$$
+$$E_t + (u(E+p))_x = 0.$$
+
+However, in above three equation we have four unknown: density $\rho$, velocity $u$, pressure $p$ and energy $E$. To close the equation system, we need one more equation
+
+- Equation of State
+$$
+p = \rho e(\gamma -1)
+$$
+
+\subsection{Hyperbolic structure of the 1D Euler equations}
+The governing equations could also be written into system of hyperbolic equation:
+$$
+    \frac{\partial \bf{V}}{\partial t} + \frac{\partial \bf{F}(\bf{V})}{\partial x} =0 
+$$
+$$
+    \bf{V} = \begin{bmatrix}
+        \rho \\ \rho u\\ E
+    \end{bmatrix}, \quad \bf{F}(\bf{V})=\begin{bmatrix}
+        \rho u \\\rho u^2 + p\\(E + p) u
+    \end{bmatrix}
+$$
+
+\subsection{Finite Volume Method}
+Based on Green's formula, we have
+
+$$
+\nabla\cdot \textbf{F}(\textbf{V}) = \oint_{\partial T_j} \textbf{F}(\textbf{V})\cdot \textbf{n} ds
+$$
+
+For finite volume discretization, we have\cite{li_multigrid_nodate}
+
+$$
+\oint_{\partial T_j} \textbf{F}(\textbf{V})\cdot \textbf{n} ds 
+\approx \sum_{e_{ik}\in \partial T_j} \oint_{e_{jk}} \bar{\textbf{F}}(\textbf{V}_j, \textbf{V}_k)\cdot \textbf{n}_{jk} dl
+$$
+
+
+\begin{align}
+    Q_j^{n+1} = Q_j^n - \frac{\Delta t_n}{\Delta x_j} (F_{j+1/2}^n - F_{j-1/2}^n)
+\end{align}
+
+In this case, the Euler Equations are separated into thousands or millions of Riemann Problem based on the discretization. However, due to the nonlinear intrinsic of the flux term $F$, it is still challenging to obtain the numerical solution of Euler Equations.
+
+\subsection{Approximate Riemann Problem}
+
+Besides the exact Riemann solution, we could obtain an approximate solution by linearizing the Euler Equation and replacing Jacobian of flux $\frac{\partial \bf{F}(\bf{V})}{\partial \bf{q}}$ by a linear operator $\hat{\bf{A}}(q_l, q_r)$ depending on the left and right status \cite{roe_approximate_1981}. Furthermore, this approximate linear operator should satisfy:
+
+
+\begin{enumerate}
+
+\item Consistency: $\hat{\bf{A}}(q_l, q_r) \rightarrow f'(q)$ as $q_l, q_r \rightarrow q$
+\item Hyperbolicity: $\hat{\bf{A}}$ must be diagonalizable with real eigenvalues, so that we can define the waves and speeds needed in the approximate solution.
+\item Conservation: $\hat{\bf{A}}(q_l, q_r)(q_r-q_l) = f(q_r) - f(q_l)$
+\end{enumerate}
+
+
+One common linear operator is the flux Jacobian of an average state:
+
+\begin{equation}
+    \hat{\bf{A}}(q_l, q_r) = f'(\hat{q})
+\end{equation}
+
+For the system of hyperbolic equations, we could solve the system by decomposing the linear operator $\hat{\bf{A}}$ into the eigenvectors $\bf{R}$ and the matrix that eigenvalues on the diagonal $\bf{\Lambda}$ so that
+
+$$
+\begin{aligned}
+    \bf{q}_t + \hat{\bf{A}} \bf{q}_x  &= 0\\
+    \bf{q}_t + \bf{R}\Lambda\bf{R}^{-1}\bf{q}_x & = 0\\
+    \bf{R}^{-1}\bf{q}_t + \Lambda\bf{R}^{-1}\bf{q}_x & = 0\\
+    \bf{w}_t + \Lambda\bf{w}_x & = 0\\
+    w_k(x, t) & = w_k(x-\lambda_k t, 0)\\
+    \bf{q}(x, t) & = \sum_k w_k(x-\lambda_k t, 0) \bf{r_k}
+\end{aligned}
+$$
+
+
+\subsection{Eigenvalue and Eigenvector of Euler Flux Jacobian}
+
+    Flux of variable $\textbf{V}$ equal to
+    
+    $$
+    \begin{aligned}
+        \bar{\textbf{F}}(\textbf{V})= \begin{bmatrix}
+            V_2\\ 
+            \frac{V_2^2}{V_1} + \left(V_3 - \frac{V_2^2}{2V_1}\right) (\gamma -1)\\
+            \frac{\gamma V_2V_3}{V_1} - \frac{V_2^3}{2V_1^2}(\gamma -1)
+        \end{bmatrix}
+    \end{aligned}
+    $$
+
+
+    Flux Jacobian of variable $\textbf{V}$ equal to \footnote{with $p = (E - \frac{1}{2}\rho u^2)(\gamma -1)$, and $H=\frac{E+p}{\rho}$}
+
+    $$
+    \begin{aligned}
+        \frac{\partial \bar{\textbf{F}}(\textbf{V})}{\partial \textbf{V}}= \begin{bmatrix}
+            u & 1 & 0 \\
+            \frac{\gamma -3}{2} u^2 & (3-\gamma)u & \gamma -1\\
+            \frac{\gamma -1}{2}u^3-uH & H-(\gamma -1)u^2 & \gamma u\\
+        \end{bmatrix}
+    \end{aligned}
+    $$
+
+    Then the Euler Equation becomes 
+
+    $$
+    \textbf{V}_t + \frac{\partial \bar{\textbf{F}}(\textbf{V})}{\partial \textbf{V}}\textbf{V}_x= 0
+    $$
+
+    The eigenvalues and corresponding eigenvectors of Jacobian matrix is
+    $$
+    \begin{aligned}
+        & \lambda_1 = u -c, &&\lambda_2 = u,\quad && \lambda_3 = u+c\\
+        &\textbf{r}_1 =\begin{bmatrix} 1 \\ u-c \\H-uc\end{bmatrix}
+        &&\textbf{r}_2 =\begin{bmatrix} 1 \\ u \\ \frac{1}{2}u^2 \end{bmatrix}\quad
+        &&\textbf{r}_3 =\begin{bmatrix} 1\\ u+c \\H+uc\end{bmatrix}
+    \end{aligned}
+    $$
+
+    Here $c=\sqrt{(\gamma - 1)(H-\frac{1}{2}u^2)}$\cite{david_i_ketcheson_chapter_2020}.
+
+
+\section{Example}
+
+Setting the initial condition and boundary condition as following
+
+$$
+    \textbf{q}_l = \begin{bmatrix}
+        3\\0\\3
+    \end{bmatrix}
+    \quad \mbox{and}\quad
+    \textbf{q}_r = \begin{bmatrix}
+        1\\1\\1
+    \end{bmatrix}
+$$
+\subsection{Shock Wave in a Single Riemann Problem}
+
+The solution of Euler Equation in a single Riemann problem is plotted in Fig.(\ref{fig:riemann}).
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale = 0.8]{images_riemann/plot010.png}
+    \caption{Solution Example of Single Riemann Problem}
+    \label{fig:riemann}
+
+\end{figure}
+
+
+\subsection{Shock Tube}
+
+Rather than compute the solution in a single cell, now I want to compute the solution of Euler Equation over a discretized space domain, averaging the flux between each cell. The solution is plotted in Fig.(\ref{fig:shocktube}).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.8]{images_shock/plot010.png}
+    \caption{Solution Example of Sod Shock Tube}
+    \label{fig:shocktube}
+
+\end{figure}
+
+\section{Conclusion}
+
+Due to the nonlinear nature of Euler flux, the exact solution will need us to consider the rarefaction wave and shock wave, which is computational costly. However, adopting finite volume method allows us to have some tolerance to approximately solve the Euler Equations, replacing the exact Riemann problem by an equivalent Riemann problem, which linearize the problem.
+
+Furthermore, although the rarefaction wave and shock wave are all represented by the shock wave in a single Riemann problem, the solution of a discretized space domain is still going to share some similarity with the exact solution, in which slope will be smoother at the rarefaction wave and steeper at the shock wave as shown in Fig.(\ref{fig:shocktube}).
+
+The linearization method is good enough to obtain an approximate solution. However, there are a lot of research studies focused on Newton's Iteration Method to solve the nonlinear Euler Equation\cite{li_multigrid_nodate}. Furthermore, there are also many discretization schemes and algorithms that could increase the accuracy of numerical solution, such as multigrid acceleration, local time stepping, implicit residual smoothing and so on\cite{jameson_solution_1983}. There are still a lot of work to be done in the future.
+
+\clearpage
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\bibliographystyle{unsrt}
+\bibliography{../Euler.bib}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
