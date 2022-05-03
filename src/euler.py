@@ -4,8 +4,9 @@ import scipy
 import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 import imageio
-import utils.animation as animation
-    
+import utils.animation_tools as animation
+from exact_solvers import euler
+import os
 
 def roe_average(q_l, q_r, gamma):
     [rho_l, rhou_l, E_l] = q_l
@@ -23,7 +24,7 @@ def roe_average(q_l, q_r, gamma):
     return u_hat, H_hat, c_hat
 
 
-def Euler_1D_roe(q_l, q_r, gamma=1.4):
+def Euler_1D_roe(q_l, q_r, gamma=1.4, approx = 'Roe'):
     # # Boundary Conditions of Riemann Problem
     # q_l = [3, 0, 3]
     # q_r = [1, 0, 1]
@@ -106,7 +107,70 @@ def Euler_1D_TW(q_l, q_r, gamma=1.4, approx = 'LF'):
         return q
     return solver
 
-def shock_tube(t_final = 1/4):
+def euler_single_riemann(t_final = 1/4, approx = 'LF'):
+    gamma = 1.4
+    # Boundary Conditions of Riemann Problem
+    q_l = np.array([3, 0, 3])
+    q_r = np.array([1, 0, 1])
+
+    # Time Domain and Space Domain
+    t0 = 0
+    Lx = 0.5
+
+    # Setting of space and time discretization
+    mX = 100
+    
+    x = np.linspace(-Lx, Lx, mX + 2) # Two more ghost cell on boundaries
+
+    delta_x = x[1] - x[0]
+    CFL = 0.9
+    delta_t = CFL * delta_x  # Time step
+
+    q = np.zeros((len(q_l), mX+2))
+    q_new = np.zeros((len(q_l), mX+2))
+
+    for i in range(len(q_l)):
+        q[i] = (x< 0) * q_l[i] + (x>= 0) * q_r[i]
+
+    figs = []
+    count = 0
+
+    solver_set = [Euler_1D_TW]
+    solver = Euler_1D_TW(q_l, q_r, approx)
+    t = 0
+    while t < t_final:
+        for xn in range(mX+2):
+            xi = x[xn]/t
+            q[:, xn] = solver(xi)
+
+        # update
+        q = q_new
+        t += delta_t
+            
+        figs.append(plt.figure())
+        
+        Q = [q[0], q[1]/q[0], (q[2]-0.5*q[1]**2/q[0])*(gamma -1)]
+        var_name = ['rho', 'u', 'E']
+
+        axes = figs[-1].subplots(3, 1)
+        for var in range(len(q_l)):
+            axes[var].plot(x, Q[var], '-', linewidth=2, label=var_name[var])
+            axes[var].set_xlim(x[0], x[-1])
+            # axes[var].set_ylim(-0.1, 3.3)
+            axes[var].legend()
+        axes[0].set_title('t = %.03f' % t)
+
+        figs[-1].savefig('./results/images_riemann/%s_plot%03d.png' % (solver_set[0].__name__, count))
+        print('fig%03d.png saved'% count)
+        count += 1
+        plt.close(figs[-1])
+    
+    # Animate the solution
+    images = animation.make_images(figs)
+    imageio.mimsave('results/%s_riemann_shock.gif' % solver_set[0].__name__, images)
+
+
+def shock_tube(q_l, q_r, gamma, t_final = 1/4):
     gamma = 1.4
     # Boundary Conditions of Riemann Problem
     q_l = np.array([3, 0, 3])
@@ -177,21 +241,26 @@ def shock_tube(t_final = 1/4):
     imageio.mimsave('results/shock_tube_detail.gif', images)
     return Q
 
-def test_euler():
-    gamma = 1.4
-    # Boundary Conditions of Riemann Problem
-    q_l = np.array([3, 0, 3])
-    q_r = np.array([1, 0, 1])
+
+
+def euler_riemann(q_l, q_r, gamma, solver, solver_name, t_final = 1/4):
+    # Create Result Directory
+    script_dir = os.path.dirname(__file__)
+    results_dir = os.path.join(script_dir, '../results/euler_%s/' % solver_name )
+
+    if not os.path.isdir(results_dir):
+        os.makedirs(results_dir)
 
     # Time Domain and Space Domain
     t0 = 0
-    t_final = 1/4
     Lx = 0.5
 
     # Setting of space and time discretization
     mX = 100
     
     x = np.linspace(-Lx, Lx, mX + 2) # Two more ghost cell on boundaries
+    var_name = ['rho', 'u', 'E']
+
 
     delta_x = x[1] - x[0]
     CFL = 0.9
@@ -206,8 +275,6 @@ def test_euler():
     figs = []
     count = 0
 
-    solver_set = [Euler_1D_TW]
-    solver = Euler_1D_TW(q_l, q_r, approx='HLL')
     t = 0
     while t < t_final:
         for xn in range(mX+2):
@@ -221,7 +288,6 @@ def test_euler():
         figs.append(plt.figure())
         
         Q = [q[0], q[1]/q[0], (q[2]-0.5*q[1]**2/q[0])*(gamma -1)]
-        var_name = ['rho', 'u', 'E']
 
         axes = figs[-1].subplots(3, 1)
         for var in range(len(q_l)):
@@ -231,16 +297,65 @@ def test_euler():
             axes[var].legend()
         axes[0].set_title('t = %.03f' % t)
 
-        figs[-1].savefig('./results/images_riemann/%s_plot%03d.png' % (solver_set[0].__name__, count))
+        figs[-1].savefig(results_dir + 'plot%03d.png' % count)
         print('fig%03d.png saved'% count)
         count += 1
         plt.close(figs[-1])
     
     # Animate the solution
     images = animation.make_images(figs)
-    imageio.mimsave('results/%s_riemann_shock.gif' % solver_set[0].__name__, images)
+    imageio.mimsave(results_dir + '../%s_riemann_shock.gif' % solver_name, images)
+    return Q
+
+
+def plot_comparison():
+    gamma = 1.4
+
+    # Boundary Conditions of Riemann Problem
+    q_l = np.array([3, 0, 3])
+    q_r = np.array([1, 0, 1])
+
+    t_final = 1/4
+
+    # Exact Solution
+    states, speeds, reval, wave_types = euler.exact_riemann_solution(q_l,q_r)
+
+    # Roe Solver
+    solver_Roe = Euler_1D_roe(q_l, q_r)
+
+    # Two Wave solver
+    # Lax-Friendrich
+    solver_LF = Euler_1D_TW(q_l, q_r)
+
+    # HLL
+    solver_HLL = Euler_1D_TW(q_l, q_r, approx='HLL')
+
+    Q_exact = euler_riemann(q_l, q_r, gamma, reval, 'Exact', t_final)
+    Q_Roe = euler_riemann(q_l, q_r, gamma, solver_Roe, 'Roe', t_final)
+    Q_LF = euler_riemann(q_l, q_r, gamma, solver_LF, 'LF', t_final)
+    Q_HLL = euler_riemann(q_l, q_r, gamma, solver_HLL, 'HLL', t_final)
+
+    var_name = ['rho', 'u', 'E']
+    method_name = ['exact', 'Roe', 'LF', 'HLL']
+    Lx = 0.5
+
+    # Setting of space and time discretization
+    mX = 100
+    
+    x = np.linspace(-Lx, Lx, mX + 2) # Two more ghost cell on boundaries
+
+    fig, axes = plt.subplots(3, 1)
+    solution_set = [Q_exact, Q_Roe, Q_LF, Q_HLL]
+    for var in range(len(q_l)):
+        for ind, solution in enumerate(solution_set):
+            axes[var].plot(x, solution[var], '-', linewidth=2, label=var_name[var]+method_name[ind])
+        axes[var].set_xlim(x[0], x[-1])
+        # axes[var].set_ylim(-0.1, 3.3)
+        axes[var].legend()
+    axes[0].set_title('t = %.03f' % t_final)
+    fig.savefig('/Users/user/Documents/Projects/FEM-NS/results/comparison.png')
 
 
 if __name__ == "__main__":
-    test_euler()
+    plot_comparison()
     # shock_tube()

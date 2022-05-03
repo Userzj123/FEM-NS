@@ -41,4 +41,4 @@
 *.fls
 __init__.*
 *.DS_Store
-*/images*/
+*/euler_*/
