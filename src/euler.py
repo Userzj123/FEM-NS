@@ -52,7 +52,61 @@ def Euler_1D_roe(q_l, q_r, gamma=1.4):
         return q
     return solver
 
-def shock_tube():
+
+def Euler_1D_TW(q_l, q_r, gamma=1.4, approx = 'LF'):
+    """
+    Approximate Riemann Problem - Two wave Solver
+    """
+
+    # Flux term
+    Flux = lambda q: np.array([q[1], q[1]**2/q[0] + (gamma - 1)*(q[2]-q[1]**2/2/q[0]), gamma*q[1]*q[2]/q[0]-q[1]**3/2/q[0]**2*(gamma - 1)])
+
+    u_hat, H_hat, c_hat = roe_average(q_l, q_r, gamma)
+
+    # Left and Right State
+    rho_l, rhou_l, E_l = q_l
+    rho_r, rhou_r, E_r = q_r
+
+    # Velocity, Pressure and C
+    u_l = rhou_l / rho_l
+    u_r = rhou_r / rho_r
+
+    P_l = (gamma - 1) * (E_l - 0.5 * rhou_l **2 /rho_l)
+    P_r = (gamma - 1) * (E_r - 0.5 * rhou_r **2 /rho_r)
+    H_l = (E_l + P_l) / rho_l
+    H_r = (E_r + P_r) / rho_r
+    c_l = np.sqrt((gamma - 1) * (H_l - 0.5 * u_l **2))
+    c_r = np.sqrt((gamma - 1) * (H_r - 0.5 * u_r **2))
+
+    # Wave speed at the left state, right state and the approxiamte state
+    speed_min = [u_l - c_l, u_hat - c_hat, u_r - c_r]
+    speed_max = [u_l + c_l, u_hat + c_hat, u_r + c_r]
+
+
+    umin = np.min(speed_min)
+    umax = np.max(speed_max)
+
+    a = max(abs(umin), abs(umax))
+
+    if approx == 'LF':
+        s1 = -a
+        s2 = a
+    elif approx == 'HLL':
+        s1 = umin
+        s2 = umax
+
+    # Intermediate State
+    q_m = (Flux(q_r) -  Flux(q_l) + s1*q_l - s2*q_r) / ( s1-s2 )
+    
+    # Result
+    def solver(xi):
+        q = np.zeros((len(q_l)))
+        for ind in range(len(q_l)):
+            q[ind] = (xi<-a) * q_l[ind] + (xi<a) * (-a<= xi) * q_m[ind] + (xi>a) * q_r[ind]
+        return q
+    return solver
+
+def shock_tube(t_final = 1/4):
     gamma = 1.4
     # Boundary Conditions of Riemann Problem
     q_l = np.array([3, 0, 3])
@@ -60,7 +114,6 @@ def shock_tube():
 
     # Time Domain and Space Domain
     t0 = 0
-    t_final = 1/4
     Lx = 0.5
 
     # Setting of space and time discretization
@@ -122,6 +175,7 @@ def shock_tube():
     # Animate the solution
     images = animation.make_images(figs)
     imageio.mimsave('results/shock_tube_detail.gif', images)
+    return Q
 
 def test_euler():
     gamma = 1.4
@@ -151,7 +205,9 @@ def test_euler():
 
     figs = []
     count = 0
-    solver = Euler_1D_roe(q_l, q_r)
+
+    solver_set = [Euler_1D_TW]
+    solver = Euler_1D_TW(q_l, q_r, approx='HLL')
     t = 0
     while t < t_final:
         for xn in range(mX+2):
@@ -175,14 +231,14 @@ def test_euler():
             axes[var].legend()
         axes[0].set_title('t = %.03f' % t)
 
-        figs[-1].savefig('./results/images_riemann/plot%03d.png' % count)
+        figs[-1].savefig('./results/images_riemann/%s_plot%03d.png' % (solver_set[0].__name__, count))
         print('fig%03d.png saved'% count)
         count += 1
         plt.close(figs[-1])
     
     # Animate the solution
     images = animation.make_images(figs)
-    imageio.mimsave('results/riemann_shock.gif', images)
+    imageio.mimsave('results/%s_riemann_shock.gif' % solver_set[0].__name__, images)
 
 
 if __name__ == "__main__":

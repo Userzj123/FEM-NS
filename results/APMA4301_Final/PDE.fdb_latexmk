@@ -1,14 +1,15 @@
 # Fdb version 3
-["bibtex PDE"] 1651498392 "PDE.aux" "PDE.bbl" "PDE" 1651498460
+["bibtex PDE"] 1651586590 "PDE.aux" "PDE.bbl" "PDE" 1651586709
   "../Euler.bib" 1650573912 15900 bd1708f4e19b2e7a04c8ffff0575c28c ""
   "/usr/local/texlive/2018/texmf-dist/bibtex/bst/base/unsrt.bst" 1480098433 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "PDE.aux" 1651498460 2169 996f247db91b767af77500f750024fa0 ""
+  "PDE.aux" 1651586706 1637 47dd399e278a90348f143aaed797d294 ""
   (generated)
   "PDE.blg"
   "PDE.bbl"
-["pdflatex"] 1651498460 "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.tex" "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf" "PDE" 1651498460
-  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.aux" 1651498460 2169 996f247db91b767af77500f750024fa0 ""
-  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.tex" 1651498460 10924 203d2c251778e2392a27014c5e47726c ""
+["pdflatex"] 1651586706 "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.tex" "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf" "PDE" 1651586709
+  "../images_riemann/plot010.png" 1651455772 18262 febd1027c59553024e5b9d0532c9d804 ""
+  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.aux" 1651586706 1637 47dd399e278a90348f143aaed797d294 ""
+  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.tex" 1651586709 9265 03db19aa9f2f5d6c0d3bed36d3c453ba ""
   "/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc" 1480098666 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm" 1480098688 2532 9ad73cf4dd2173a847f2a5f5608e0b9a ""
@@ -102,7 +103,6 @@
   "/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/kvoptions.sty" 1480098836 22417 1d9df1eb66848aa31b18a593099cf45c ""
   "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/mathpazo.sty" 1480098837 8977 7001b1ab94674ce4a6004aef2826ec90 ""
   "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/omlzplm.fd" 1480098837 638 2349dd185efcefd0c3380a2601df0cee ""
-  "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/omsppl.fd" 1480098837 576 be451a105739548c4929bd91be18fae6 ""
   "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/omszplm.fd" 1480098837 455 c09241d92b40b1b84eb2bb5776606aea ""
   "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/omxzplm.fd" 1480098837 322 fb88cb3e5f25cf1596ba8826c4210e0e ""
   "/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/ot1ppl.fd" 1480098837 961 06b773644d960aac68add40fcb596208 ""
@@ -113,13 +113,13 @@
   "/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1523934492 2717033 f61a5287d9c22a39a74f1979fe3f905c ""
   "/usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1526720952 4220280 ece4e077e9c37635692cde94834a4cf6 ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
-  "PDE.aux" 1651498460 2169 996f247db91b767af77500f750024fa0 ""
-  "PDE.bbl" 1651498392 1016 7fff824a8f63885c46aa99e43afb9647 "bibtex PDE"
-  "PDE.tex" 1651498460 10924 203d2c251778e2392a27014c5e47726c ""
+  "PDE.aux" 1651586706 1637 47dd399e278a90348f143aaed797d294 ""
+  "PDE.bbl" 1651586590 673 5f30cdf2340bb7d5c5b48511b6d23ecd "bibtex PDE"
+  "PDE.tex" 1651586709 9265 03db19aa9f2f5d6c0d3bed36d3c453ba ""
   "diazessay.cls" 1547410950 4158 51282df307deed0c6dccb24ab157c07c ""
   (generated)
-  "PDE.aux"
-  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.log"
   "PDE.pdf"
-  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf"
   "PDE.log"
+  "PDE.aux"
+  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf"
+  "/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.log"
