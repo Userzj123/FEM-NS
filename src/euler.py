@@ -312,10 +312,14 @@ def plot_comparison():
     gamma = 1.4
 
     # Boundary Conditions of Riemann Problem
-    q_l = np.array([3, 0, 3])
-    q_r = np.array([1, 0, 1])
+    q_l = np.array([0.1, 0, 0.1])
+    q_r = np.array([1, 1, 1])
 
     t_final = 1/4
+
+    case = '_case1'
+    var_name = ['rho', 'u', 'E']
+    method_name = ['exact', 'Roe', 'LF', 'HLL']
 
     # Exact Solution
     states, speeds, reval, wave_types = euler.exact_riemann_solution(q_l,q_r)
@@ -330,13 +334,11 @@ def plot_comparison():
     # HLL
     solver_HLL = Euler_1D_TW(q_l, q_r, approx='HLL')
 
-    Q_exact = euler_riemann(q_l, q_r, gamma, reval, 'Exact', t_final)
-    Q_Roe = euler_riemann(q_l, q_r, gamma, solver_Roe, 'Roe', t_final)
-    Q_LF = euler_riemann(q_l, q_r, gamma, solver_LF, 'LF', t_final)
-    Q_HLL = euler_riemann(q_l, q_r, gamma, solver_HLL, 'HLL', t_final)
+    Q_exact = euler_riemann(q_l, q_r, gamma, reval, method_name[0]+case, t_final)
+    Q_Roe = euler_riemann(q_l, q_r, gamma, solver_Roe, method_name[1]+case, t_final)
+    Q_LF = euler_riemann(q_l, q_r, gamma, solver_LF, method_name[2]+case, t_final)
+    Q_HLL = euler_riemann(q_l, q_r, gamma, solver_HLL, method_name[3]+case, t_final)
 
-    var_name = ['rho', 'u', 'E']
-    method_name = ['exact', 'Roe', 'LF', 'HLL']
     Lx = 0.5
 
     # Setting of space and time discretization
@@ -353,7 +355,7 @@ def plot_comparison():
         # axes[var].set_ylim(-0.1, 3.3)
         axes[var].legend()
     axes[0].set_title('t = %.03f' % t_final)
-    fig.savefig('/Users/user/Documents/Projects/FEM-NS/results/comparison.png')
+    fig.savefig('/Users/user/Documents/Projects/FEM-NS/results/comparison%s.png' % case)
 
 
 if __name__ == "__main__":

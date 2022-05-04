@@ -237,15 +237,19 @@ This method assumes that wave speeds are different but still based on the maximu
 \end{equation}
 
 
-\section{Error Analysis}
+\section{Conclusion}
+
+The numerical solver of Euler Equations by Roe flux, Lax-Friendrichs numerical Flux and HLL scheme can be coded up based on previous information and the exact solution is imported from previous work\cite{david_i_ketcheson_chapter_2020}. 
+
+We could see that the approximate solution by roe flux is represented by three propagating wave while the solutions obtained by two waves solver have only two waves. Furthermore, the left going rarefaction wave is replaced by a shock wave in both solver. However, it should be noticed that the two waves solver adopted the maximum wave speed should have the same intermediate domain with exact solver while in my result, the right going wave is lagging behind the exact solution, which requires further investigation.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale=0.8]{images_riemann/plot010.png}
+    \includegraphics[scale=0.8]{comparison.png}
     \label{fig:shocktube}
-    \caption{Riemann Solution of Shock Tube}
+    \caption{Comparison of Different Riemann Solver}
 \end{figure}
-\section{Conclusion}
+
 
 \clearpage
 %----------------------------------------------------------------------------------------

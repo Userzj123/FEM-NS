@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.5.19)  3 MAY 2022 10:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.5.19)  4 MAY 2022 10:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -398,27 +398,31 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 5.21004pt on input line 121.
  [2] [3]
-<../images_riemann/plot010.png, id=21, 462.528pt x 346.896pt>
-File: ../images_riemann/plot010.png Graphic file (type png)
-<use ../images_riemann/plot010.png>
-Package pdftex.def Info: ../images_riemann/plot010.png  used on input line 244.
+<../comparison.png, id=21, 462.528pt x 346.896pt>
+File: ../comparison.png Graphic file (type png)
+<use ../comparison.png>
+Package pdftex.def Info: ../comparison.png  used on input line 248.
 (pdftex.def)             Requested size: 370.02289pt x 277.51717pt.
- [4 <../images_riemann/plot010.png>] (/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.bbl) [5
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4] [5 <../comparison.png>] (/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.bbl) [6
 
 ] (/Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.aux) ) 
 Here is how much of TeX's memory you used:
- 5917 strings out of 492649
- 88268 string characters out of 6129622
+ 5928 strings out of 492649
+ 88298 string characters out of 6129622
  200738 words of memory out of 5000000
  9571 multiletter control sequences out of 15000+600000
- 57949 words of font info for 164 fonts, out of 8000000 for 9000
+ 58585 words of font info for 172 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,14n,45p,473b,311s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,14n,45p,588b,311s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmb.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on /Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf (5 pages, 120220 bytes).
+Output written on /Users/user/Documents/Projects/FEM-NS/results/APMA4301_Final/PDE.pdf (6 pages, 131123 bytes).
 PDF statistics:
- 60 PDF objects out of 1000 (max. 8388607)
- 41 compressed objects within 1 object stream
+ 63 PDF objects out of 1000 (max. 8388607)
+ 43 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  36870 words of extra memory for PDF output out of 42996 (max. 10000000)
 
